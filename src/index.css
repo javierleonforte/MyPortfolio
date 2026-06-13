@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    overflow-x: hidden;
+    background-color: #0f172a;
+  }
+
+  ::selection {
+    background-color: #1d4ed8;
+    color: #f1f5f9;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1d4ed8;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+  }
+}
+
+@layer utilities {
+  .drop-shadow-blue-glow {
+    filter: drop-shadow(0 0 20px rgba(29, 78, 216, 0.7));
+  }
+
+  .text-shadow-blue {
+    text-shadow: 0 0 20px rgba(29, 78, 216, 0.5);
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(29, 78, 216, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(29, 78, 216, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply text-gray-400 hover:text-gray-200 transition-colors duration-300 relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-px bg-blue-700 transition-all duration-300;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  .nav-link.active {
+    @apply text-gray-200;
+  }
+
+  .section-title {
+    @apply text-4xl text-gray-300 font-semibold tracking-tight;
+  }
+
+  .btn-primary {
+    @apply text-gray-200 bg-blue-700 px-5 py-2.5 rounded-lg
+           hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-700/40
+           transition-all duration-200 flex items-center gap-2 font-mono text-sm;
+  }
+
+  .btn-outline {
+    @apply border-2 border-blue-700 text-gray-400 px-4 py-2 rounded-md
+           hover:bg-blue-700 hover:text-gray-200 hover:-translate-y-0.5
+           hover:shadow-md hover:shadow-blue-400/30
+           transition-all duration-200 font-mono text-sm;
+  }
+
+  .skill-card {
+    @apply border-2 border-blue-700/60 rounded-lg p-5
+           hover:border-blue-500 hover:shadow-xl hover:shadow-blue-700/20
+           transition-all duration-300 bg-slate-800/50 backdrop-blur-sm;
+  }
+
+  .project-card {
+    @apply bg-slate-800 rounded-xl overflow-hidden
+           border border-slate-700 hover:border-blue-700/50
+           hover:shadow-2xl hover:shadow-blue-700/10
+           transition-all duration-300 hover:-translate-y-1;
+  }
+}
