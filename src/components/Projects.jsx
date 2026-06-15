@@ -28,18 +28,18 @@ const projects = [
     description: 'An E-Commerce website for gaming products, built with React and TailwindCSS. Browse and shop the latest gaming gear!',
     tags: ['HTML', 'JavaScript', 'TailwindCSS', 'React'],
     tagColors: ['bg-cyan-500/10 text-cyan-400 border-cyan-500/30'],
-    github: 'https://github.com/javierleonforte/dotDagerEvent',
-    live: 'https://dotdager-dun.vercel.app',
+    github: 'https://github.com/javierleonforte/ubicacion-gamer',
+    live: 'https://ubicaciongamer.vercel.app',
   },
   {
     id: 'portfolio',
     title: 'This Portfolio',
-    image: '',
+    image: '/assets/myportfolio.png',
     description: 'My personal portfolio website, built with React and TailwindCSS. Showcasing my projects, skills and experience in a clean and modern design.',
     tags: ['HTML', 'JavaScript', 'TailwindCSS', 'React'],
     tagColors: ['bg-cyan-500/10 text-cyan-400 border-cyan-500/30'],
-    github: 'https://github.com/javierleonforte/dotDagerEvent',
-    live: 'https://dotdager-dun.vercel.app',
+    github: 'https://github.com/javierleonforte/MyPortfolio',
+    live: 'https://myportfolio-alpha-wine-38.vercel.app',
   },
 ]
 

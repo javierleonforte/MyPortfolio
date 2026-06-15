@@ -45,7 +45,7 @@ export default function AboutMe() {
 
             <div className="w-64 h-80 md:w-72 md:h-96 rounded-lg overflow-hidden bg-slate-800 border border-slate-700">
               <img
-                src="/assets/file.png"
+                src="/assets/me2.jpeg"
                 alt="Javier Leonforte"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 onError={(e) => {
