@@ -1,43 +1,34 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLang } from '../useLang'
 
+// Datos NO traducibles de cada proyecto (la imagen, tags, colores y enlaces).
+// El título y la descripción se toman de las traducciones usando el `id`.
 const projects = [
   {
     id: 'chickenclicker',
-    title: 'Chicken Clicker!',
     image: '/assets/chickenclicker.png',
-    description: 'An Idle Clicker game developed with HTML, CSS and JavaScript. Click your way to the top!',
-    tags: ['HTML','JavaScript', 'TailwindCSS', 'React'],
-    tagColors: ['bg-yellow-500/10 text-yellow-400 border-yellow-500/30'],
+    tags: ['HTML', 'JavaScript', 'TailwindCSS', 'React'],
     github: 'https://github.com/javierleonforte/ChickenClicker',
     live: 'https://chickenclicker-ten.vercel.app/',
   },
   {
     id: 'landing',
-    title: 'Landing Page - Dot Dager',
     image: '/assets/landing.png',
-    description: 'A Landing Page for the content creator known as Dot Dager, built with JavaScript and TailwindCSS.',
     tags: ['HTML', 'CSS', 'JavaScript', 'TailwindCSS'],
-    tagColors: ['bg-cyan-500/10 text-cyan-400 border-cyan-500/30'],
     github: 'https://github.com/javierleonforte/dotDagerEvent',
     live: 'https://dotdager-dun.vercel.app',
   },
   {
     id: 'ubicaciongamer',
-    title: 'Ubicación Gamer - E-Commerce',
     image: '/assets/ubicaciongamer.png',
-    description: 'An E-Commerce website for gaming products, built with React and TailwindCSS. Browse and shop the latest gaming gear!',
     tags: ['HTML', 'JavaScript', 'TailwindCSS', 'React'],
-    tagColors: ['bg-cyan-500/10 text-cyan-400 border-cyan-500/30'],
     github: 'https://github.com/javierleonforte/ubicacion-gamer',
     live: 'https://ubicaciongamer.vercel.app',
   },
   {
     id: 'portfolio',
-    title: 'This Portfolio',
     image: '/assets/myportfolio.png',
-    description: 'My personal portfolio website, built with React and TailwindCSS. Showcasing my projects, skills and experience in a clean and modern design.',
     tags: ['HTML', 'JavaScript', 'TailwindCSS', 'React'],
-    tagColors: ['bg-cyan-500/10 text-cyan-400 border-cyan-500/30'],
     github: 'https://github.com/javierleonforte/MyPortfolio',
     live: 'https://myportfolio-alpha-wine-38.vercel.app',
   },
@@ -80,7 +71,7 @@ function TagIcon({ tag }) {
   return icons[tag] || null
 }
 
-function ProjectCard({ project, index }) {
+function ProjectCard({ project, content, labels, index }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -105,7 +96,7 @@ function ProjectCard({ project, index }) {
       <div className="relative overflow-hidden h-48 bg-slate-900">
         <img
           src={project.image}
-          alt={project.title}
+          alt={content.title}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           onError={(e) => {
             e.currentTarget.parentElement.classList.add('flex', 'items-center', 'justify-center')
@@ -118,7 +109,7 @@ function ProjectCard({ project, index }) {
 
       {/* Content */}
       <div className="p-5">
-        <h3 className="text-gray-200 text-xl font-semibold mb-2">{project.title}</h3>
+        <h3 className="text-gray-200 text-xl font-semibold mb-2">{content.title}</h3>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-3">
@@ -133,7 +124,7 @@ function ProjectCard({ project, index }) {
           ))}
         </div>
 
-        <p className="text-gray-500 text-sm leading-relaxed mb-5">{project.description}</p>
+        <p className="text-gray-500 text-sm leading-relaxed mb-5">{content.description}</p>
 
         <div className="flex gap-3">
           <a
@@ -145,7 +136,7 @@ function ProjectCard({ project, index }) {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
             </svg>
-            GitHub
+            {labels.github}
           </a>
           <a
             href={project.live}
@@ -156,7 +147,7 @@ function ProjectCard({ project, index }) {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
-            Live Demo
+            {labels.live}
           </a>
         </div>
       </div>
@@ -165,6 +156,7 @@ function ProjectCard({ project, index }) {
 }
 
 export default function Projects() {
+  const { t } = useLang()
   const titleRef = useRef(null)
   const [titleVisible, setTitleVisible] = useState(false)
 
@@ -184,9 +176,9 @@ export default function Projects() {
         ref={titleRef}
         className={`mb-16 transition-all duration-700 ${titleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
       >
-        <p className="text-blue-700 text-xs tracking-[0.25em] uppercase mb-2">// what I&apos;ve built</p>
+        <p className="text-blue-700 text-xs tracking-[0.25em] uppercase mb-2">{t.projects.eyebrow}</p>
         <div className="flex items-center gap-4">
-          <h2 className="section-title">Projects</h2>
+          <h2 className="section-title">{t.projects.title}</h2>
           <div className="flex-1 h-px bg-gradient-to-r from-blue-700/50 to-transparent max-w-sm" />
         </div>
       </div>
@@ -194,7 +186,13 @@ export default function Projects() {
       {/* Cards grid */}
       <div className="flex flex-wrap justify-center gap-8">
         {projects.map((project, i) => (
-          <ProjectCard key={project.id} project={project} index={i} />
+          <ProjectCard
+            key={project.id}
+            project={project}
+            content={t.projects.items[project.id]}
+            labels={{ github: t.projects.github, live: t.projects.live }}
+            index={i}
+          />
         ))}
       </div>
     </section>

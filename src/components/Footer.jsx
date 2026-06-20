@@ -1,4 +1,7 @@
+import { useLang } from '../useLang'
+
 export default function Footer() {
+  const { t } = useLang()
   const year = new Date().getFullYear()
 
   return (
@@ -9,13 +12,11 @@ export default function Footer() {
           <span>Javier Leonforte</span>
           <span className="text-blue-700">/&gt;</span>
         </div>
-
         <p className="text-gray-600 text-xs font-mono">
-          &copy; {year} — All rights reserved
+          &copy; {year} — {t.footer.rights}
         </p>
-
         <p className="text-gray-700 text-xs font-mono">
-          Built with{' '}
+          {t.footer.built}{' '}
           <span className="text-blue-700">React</span>
           {' '}+{' '}
           <span className="text-cyan-600">Tailwind</span>

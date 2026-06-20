@@ -1,4 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLang } from '../useLang'
+
+// ─────────────────────────────────────────────
+// CONFIGURACIÓN EMAILJS
+// 1. Creá una cuenta gratis en https://www.emailjs.com
+// 2. Creá un Service (Gmail, Outlook, etc.) y copiá el Service ID
+// 3. Creá un Email Template y copiá el Template ID
+//    Variables que el template puede usar: {{to_name}}, {{to_email}}, {{message}}
+// 4. Copiá tu Public Key desde Account > API Keys
+// ─────────────────────────────────────────────
+const EMAILJS_SERVICE_ID  = 'service_4pmx7vl'   // ← reemplazá
+const EMAILJS_TEMPLATE_ID = 'template_xrz86sf'  // ← reemplazá
+const EMAILJS_PUBLIC_KEY  = 'vGH8d22gyTEBQraHG'   // ← reemplazá
 
 const socials = [
   {
@@ -34,6 +47,7 @@ const socials = [
 ]
 
 export default function Contact() {
+  const { t } = useLang()
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
   const [form, setForm] = useState({ to_name: '', to_email: '', message: '' })
@@ -48,29 +62,40 @@ export default function Contact() {
     return () => observer.disconnect()
   }, [])
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setStatus('sending')
+
     try {
-      // Replace with your EmailJS credentials
-      const result = await window.emailjs?.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
-        form,
-        'YOUR_PUBLIC_KEY'
-      )
-      if (result?.status === 200) {
+      // Llamada directa a la API de EmailJS (sin necesidad de instalar el SDK)
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id:  EMAILJS_SERVICE_ID,
+          template_id: EMAILJS_TEMPLATE_ID,
+          user_id:     EMAILJS_PUBLIC_KEY,
+          template_params: {
+            to_name:  form.to_name,
+            to_email: form.to_email,
+            message:  form.message,
+          },
+        }),
+      })
+
+      if (res.ok) {
         setStatus('success')
         setForm({ to_name: '', to_email: '', message: '' })
         setTimeout(() => setStatus(null), 5000)
       } else {
+        console.error('EmailJS error:', res.status, await res.text())
         setStatus('error')
+        setTimeout(() => setStatus(null), 4000)
       }
-    } catch {
+    } catch (err) {
+      console.error('Network error:', err)
       setStatus('error')
       setTimeout(() => setStatus(null), 4000)
     }
@@ -83,101 +108,61 @@ export default function Contact() {
 
   return (
     <section id="contact" className="py-24 px-6 max-w-7xl mx-auto">
-      {/* Section header */}
       <div className="mb-16">
-        <p className="text-blue-700 text-xs tracking-[0.25em] uppercase mb-2">// get in touch</p>
+        <p className="text-blue-700 text-xs tracking-[0.25em] uppercase mb-2">{t.contact.eyebrow}</p>
         <div className="flex items-center gap-4">
-          <h2 className="section-title">Contact</h2>
+          <h2 className="section-title">{t.contact.title}</h2>
           <div className="flex-1 h-px bg-gradient-to-r from-blue-700/50 to-transparent max-w-sm" />
         </div>
       </div>
 
-      <div
-        ref={ref}
-        className={`flex flex-col lg:flex-row gap-12 transition-all duration-700 ${
-          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}
-      >
+      <div ref={ref} className={`flex flex-col lg:flex-row gap-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex-1 space-y-5">
           <div className="flex flex-col sm:flex-row gap-5">
             <div className="flex-1 space-y-1.5">
-              <label htmlFor="to_name" className="text-gray-500 text-xs font-mono tracking-wide">
-                // name
-              </label>
-              <input
-                type="text"
-                id="to_name"
-                name="to_name"
-                value={form.to_name}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="Your name"
-                required
-              />
+              <label htmlFor="to_name" className="text-gray-500 text-xs font-mono tracking-wide">{t.contact.labels.name}</label>
+              <input type="text" id="to_name" name="to_name" value={form.to_name} onChange={handleChange}
+                className={inputClass} placeholder={t.contact.placeholders.name} required />
             </div>
             <div className="flex-1 space-y-1.5">
-              <label htmlFor="to_email" className="text-gray-500 text-xs font-mono tracking-wide">
-                // email
-              </label>
-              <input
-                type="email"
-                id="to_email"
-                name="to_email"
-                value={form.to_email}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="your@email.com"
-                required
-              />
+              <label htmlFor="to_email" className="text-gray-500 text-xs font-mono tracking-wide">{t.contact.labels.email}</label>
+              <input type="email" id="to_email" name="to_email" value={form.to_email} onChange={handleChange}
+                className={inputClass} placeholder={t.contact.placeholders.email} required />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="message" className="text-gray-500 text-xs font-mono tracking-wide">
-              // message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              value={form.message}
-              onChange={handleChange}
-              rows={6}
-              className={inputClass + ' resize-none'}
-              placeholder="Your message..."
-              required
-            />
+            <label htmlFor="message" className="text-gray-500 text-xs font-mono tracking-wide">{t.contact.labels.message}</label>
+            <textarea id="message" name="message" value={form.message} onChange={handleChange}
+              rows={6} className={inputClass + ' resize-none'} placeholder={t.contact.placeholders.message} required />
           </div>
 
-          <button
-            type="submit"
-            disabled={status === 'sending'}
-            className="btn-primary disabled:opacity-60 disabled:cursor-not-allowed"
-          >
+          <button type="submit" disabled={status === 'sending'}
+            className="btn-primary disabled:opacity-60 disabled:cursor-not-allowed">
             {status === 'sending' ? (
               <>
                 <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                 </svg>
-                Sending...
+                {t.contact.sending}
               </>
             ) : (
               <>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
                 </svg>
-                Send message
+                {t.contact.send}
               </>
             )}
           </button>
 
-          {/* Status messages */}
           {status === 'success' && (
             <div className="flex items-center gap-2 text-green-400 text-sm font-mono bg-green-400/10 border border-green-400/20 rounded-lg px-4 py-2.5">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Message sent successfully!
+              {t.contact.success}
             </div>
           )}
           {status === 'error' && (
@@ -185,46 +170,32 @@ export default function Contact() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
-              Something went wrong. Try again or reach me directly.
+              {t.contact.error}
             </div>
           )}
         </form>
 
-        {/* Social links sidebar */}
+        {/* Socials */}
         <div className="lg:w-64 space-y-6">
-          <p className="text-gray-500 text-sm">Or reach me through:</p>
-
+          <p className="text-gray-500 text-sm">{t.contact.also}</p>
           <div className="space-y-3">
             {socials.map(({ name, href, hover, icon }) => (
-              <a
-                key={name}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                className={`flex items-center gap-3 text-gray-500 border border-slate-700 rounded-lg px-4 py-3 
-                  ${hover} hover:bg-slate-800/60 transition-all duration-200 group`}
-              >
+              <a key={name} href={href} target="_blank" rel="noreferrer"
+                className={`flex items-center gap-3 text-gray-500 border border-slate-700 rounded-lg px-4 py-3 ${hover} hover:bg-slate-800/60 transition-all duration-200 group`}>
                 <span className="transition-colors duration-200">{icon}</span>
-                <span className="text-sm font-mono group-hover:translate-x-0.5 transition-transform duration-200">
-                  {name}
-                </span>
-                <svg
-                  className="ml-auto w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  strokeLinecap="round" strokeLinejoin="round"
-                >
+                <span className="text-sm font-mono group-hover:translate-x-0.5 transition-transform duration-200">{name}</span>
+                <svg className="ml-auto w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                 </svg>
               </a>
             ))}
           </div>
-
-          {/* Location note */}
           <div className="flex items-center gap-2 text-gray-600 text-xs font-mono">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
             </svg>
-            Buenos Aires, Argentina
+            {t.contact.location}
           </div>
         </div>
       </div>
